@@ -1,0 +1,53 @@
+﻿services:
+  book.api:
+    image: book.api
+    build:
+      context: .
+      dockerfile: Book.API/Dockerfile
+    ports:
+      - "5000:80"
+      - "5001:443"
+    networks:
+      - book-network
+      - keycloak-network
+      
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "SqlServer2019!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    networks:
+      - book-network
+      
+  mssqltools:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./Book.Infrastructure/Scripts/01-BookDatabase.sql:/tmp/01-BookDatabase.sql
+      - ./Book.Infrastructure/Scripts/02-BookData.sql:/tmp/02-BookData.sql
+      - ./Book.Infrastructure/Scripts/init-bookdatabse.sh:/tmp/init-bookdatabse.sh
+    command: /bin/bash ./tmp/init-bookdatabse.sh
+    networks:
+      - book-network
+  
+  keycloak:
+    image: quay.io/keycloak/keycloak:19.0.1
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "123456"   
+    command: start-dev
+    networks:
+      - keycloak-network  
+
+networks:
+  book-network:
+    driver: bridge
+  keycloak-network:
+    driver: bridge  

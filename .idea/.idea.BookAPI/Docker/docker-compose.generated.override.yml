@@ -1,0 +1,33 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  book.api:
+    build:
+      context: "/mnt/e/Projetos/Estudo/github/BookAPI"
+      dockerfile: "Book.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "/riderDebugger/linux-x64/dotnet/dotnet"
+    - "/riderDebugger/JetBrains.Debugger.Worker.exe"
+    - "--mode=server"
+    - "--frontend-port=57100"
+    - "--backend-port=57300"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "C:\\Users\\lucas\\.nuget\\packages"
+      NUGET_FALLBACK_PACKAGES: "C:\\Users\\lucas\\.nuget\\packages"
+      RIDER_DEBUGGER_LOG_DIR: "/riderLogs"
+      RESHARPER_LOG_CONF: "/riderLogsConf/backend-log.xml"
+    image: "book.api:dev"
+    ports:
+    - "127.0.0.1:57008:57100"
+    - "127.0.0.1:57208:57300"
+    volumes:
+    - "/mnt/c/Users/lucas/.nuget/packages:/root/.nuget/fallbackpackages"
+    - "/mnt/e/Projetos/Estudo/github/BookAPI/Book.API:/app:rw"
+    - "/mnt/e/Projetos/Estudo/github/BookAPI:/src:rw"
+    - "/mnt/c/Users/lucas/AppData/Local/JetBrains/RiderRemoteDebugger/2023.2/Linux64:/riderDebugger"
+    - "/mnt/c/Program Files/JetBrains/JetBrains Rider 2023.2/bin:/riderLogsConf"
+    - "/mnt/c/Users/lucas/AppData/Local/JetBrains/Rider2023.2/log/DebuggerWorker/JetBrains.Debugger.Worker.2023_9_17_12_06_04:/riderLogs:rw"
+    working_dir: "/app"
